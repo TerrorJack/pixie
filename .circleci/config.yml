@@ -1,0 +1,46 @@
+version: 2
+
+jobs:
+  pixie-default:
+    docker:
+      - image: docker:edge-git
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run: |
+          cd .circleci
+          docker login -u terrorjack -p $DOCKER_PASS
+          docker build -t terrorjack/pixie:latest .
+          docker push terrorjack/pixie:latest
+
+  pixie-debian:
+    docker:
+      - image: docker:edge-git
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run: |
+          cd .circleci
+          docker login -u terrorjack -p $DOCKER_PASS
+          docker build -f debian.Dockerfile -t terrorjack/pixie:debian .
+          docker push terrorjack/pixie:debian
+
+  pixie-ubuntu:
+    docker:
+      - image: docker:edge-git
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run: |
+          cd .circleci
+          docker login -u terrorjack -p $DOCKER_PASS
+          docker build -f ubuntu.Dockerfile -t terrorjack/pixie:ubuntu .
+          docker push terrorjack/pixie:ubuntu
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - pixie-default
+      - pixie-debian
+      - pixie-ubuntu
